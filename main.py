@@ -7,7 +7,7 @@ if __name__ == '__main__':
     a.print_list()
     print('---\n')
 
-    for i in range(100000):
+    for i in range(10000):
         a.add_vertex()
 
     a.print_list()

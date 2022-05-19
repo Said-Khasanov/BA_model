@@ -1,10 +1,12 @@
 class Graph:
     """Простой граф"""
-    vertex: list = [i for i in range(3)]
+    vertex: list = [i for i in range(5)]
     edges = [
-        [1, 2],
-        [0, 2],
-        [0, 1],
+        [1, 2, 3, 4, 5],
+        [0, 2, 3, 4, 5],
+        [0, 1, 3, 4, 5],
+        [0, 1, 2, 4, 5],
+        [0, 1, 2, 3, 5],
     ]
     v_count = 3
     e_count = 3
@@ -32,4 +34,3 @@ class Graph:
         """
         for i, j in enumerate(self.edges):
             print(f'v{i}: {j}')
-

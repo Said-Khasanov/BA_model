@@ -13,7 +13,7 @@ class BAmodel(Graph):
         self.m = m
         # self.t = self.m
 
-    def add_vertex(self, edge:list=None):
+    def add_vertex(self, edge: list = None):
         """Создание новой вершины"""
         if edge is None:
             edge = []
@@ -46,7 +46,7 @@ class BAmodel(Graph):
         """
         return sum(
             [len(i) for i in
-             self.edges[:i] + self.edges[i+1:]
+             self.edges[:i] + self.edges[i + 1:]
              ]
         )
 

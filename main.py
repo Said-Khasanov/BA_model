@@ -12,8 +12,11 @@ if __name__ == '__main__':
 
     a.print_list()
     print(f'v = {a.v_count} e = {a.e_count}')
-    print('d_i =', a.vertex_deg(1))
-    print('S_i =', a.sum_deg_neighbors(1))
-    print('alpha_i =', a.avg_deg_neighbors(1))
-    print('p_i =', a.friendship_index(1))
+
+    i = 2  # Вершина для теста
+    print('d_i =', a.vertex_deg(i))
+    print('S_i =', a.sum_deg_neighbors(i))
+    print('alpha_i =', a.avg_deg_neighbors(i))
+    print('p_i =', a.friendship_index(i))
+
     print('p =', a.p())

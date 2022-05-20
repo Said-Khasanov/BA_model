@@ -10,6 +10,7 @@ class BAmodel(Graph):
         """
         :param m: Кол-во связей с новой вершиной, default = 5
         """
+        super().__init__()
         self.m = m
         # self.t = self.m
 

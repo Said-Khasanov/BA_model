@@ -1,15 +1,21 @@
 class Graph:
     """Простой граф"""
-    vertex: list = [i for i in range(5)]
-    edges = [
-        [1, 2, 3, 4, 5],
-        [0, 2, 3, 4, 5],
-        [0, 1, 3, 4, 5],
-        [0, 1, 2, 4, 5],
-        [0, 1, 2, 3, 5],
-    ]
-    v_count = 3
-    e_count = 3
+
+    def __init__(self, n=5):
+        """
+        Конструктор создаёт сильно связный граф из n вершин
+        """
+        self.vertex: list = [i for i in range(n)]
+        self.v_count = n
+        self.e_count = 0
+
+        self.edges = []
+        for i in range(n):
+            self.edges.append([i for i in range(n)])
+            self.edges[i].remove(i)
+            self.e_count += n-1
+
+        self.e_count /= 2
 
     def add_vertex(self, edge: list):
         """ Добавление вершины
@@ -34,3 +40,4 @@ class Graph:
         """
         for i, j in enumerate(self.edges):
             print(f'v{i}: {j}')
+

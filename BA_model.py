@@ -24,11 +24,8 @@ class BAmodel(Graph):
             P_n = (self.e_count + self.m) * 2
             weights = [len(i) / P_n for i in self.edges]
 
-            while True:
+            while len(set(edge)) != self.m:  # Исключение повоторений
                 edge = choices(self.vertex, weights, k=self.m)
-                # Исключение повоторений
-                if len(set(edge)) == self.m:
-                    break
 
         super().add_vertex(edge)
 

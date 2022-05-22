@@ -12,14 +12,11 @@ class BAmodel(Graph):
         """
         super().__init__()
         self.m = m
-        # self.t = self.m
 
     def add_vertex(self, edge: list = None):
         """Создание новой вершины"""
         if edge is None:
             edge = []
-
-            # self.t += 1
 
             P_n = (self.e_count + self.m) * 2
             weights = [len(i) / P_n for i in self.edges]
@@ -57,14 +54,14 @@ class BAmodel(Graph):
 
     def friendship_index(self, i):
         """
-        Индекс дружбы (p_i)
+        Индекс дружбы (beta_i)
         :param i: вершина
         :return:
         """
         return self.avg_deg_neighbors(i) / self.vertex_deg(i)
 
-    def p(self):
+    def paradox(self):
         """
-        Парадокс дружбы
+        Парадокс дружбы (p_f)
         """
         return sum([self.friendship_index(i) for i in self.vertex]) / len(self.vertex)

@@ -113,7 +113,7 @@ if __name__ == '__main__':
     start_time = time()
 
     # Распределение цикла на процессы
-    with Pool(6) as p:
+    with Pool() as p:  # os.cpu_count()
         res = p.map(cycle, range(n_g))
 
     # Распаковка результата вычислений

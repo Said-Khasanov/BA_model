@@ -100,7 +100,7 @@ def plt_show():
     plt.subplot(224)
     plt.title('Индекс дружбы')
     plt.xlabel('t')
-    plt.ylabel('alpha_i')
+    plt.ylabel('beta_i')
     plt.grid()
     plt.plot(x, beta_i[0], '.-r', label='i=5')
     plt.plot(x, beta_i[1], '.-y', label='i=50')

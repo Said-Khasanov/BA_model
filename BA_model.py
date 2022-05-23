@@ -4,7 +4,7 @@ from graph import Graph
 
 
 class BAmodel(Graph):
-    """Модель Барабаши-Альберта"""
+    """Модель Барабаши-Альберт"""
 
     def __init__(self, m=5):
         """
@@ -34,16 +34,19 @@ class BAmodel(Graph):
         """
         return len(self.edges[i])
 
+
     def sum_deg_neighbors(self, i):
         """
         Сумма степеней соседей (S_i)
         :param i: вершина
         """
-        return sum(
-            [len(i) for i in
-             self.edges[:i] + self.edges[i + 1:]
-             ]
-        )
+        sum = 0
+        for j in self.edges:
+            if i in j:
+                sum += len(j)
+
+        return sum
+
 
     def avg_deg_neighbors(self, i):
         """

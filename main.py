@@ -1,5 +1,5 @@
 from logging import INFO
-from multiprocessing import Pool, log_to_stderr
+# from multiprocessing import Pool, log_to_stderr
 from time import time
 
 import matplotlib.pyplot as plt
@@ -7,64 +7,59 @@ import matplotlib.pyplot as plt
 from BA_model import BAmodel
 
 
-logger = log_to_stderr()
-logger.setLevel(INFO)
+# logger = log_to_stderr()
+# logger.setLevel(INFO)
 
 # Параметры
 m = 5  # Кол-во связей с новой вершиной
-n = 10000  # Кол-во вершин в графе
-n_g = 100  # Кол-во графов
+n = 1000  # Кол-во вершин в графе
+n_g = 10  # Кол-во графов
 h = 250  # Шаг
-x = [i for i in range(h, n_g * h + 1, h)]  # Знач. координат на оси X
-div = float(len(x))  # Делитель для среднего знач.
+n_d = int(n / h)  # Кол-во точек
+x = [i for i in range(h, n + 1, h)]  # Знач. координат на оси X
 v_i = [5, 50, 100]  # Тестируемые вершины
 n_v_i = len(v_i)  # Кол-во тестируемых вершин
+G = [BAmodel(m) for _ in range(n_g)]  # Список графов
 
 # Списки для хранения свойств графов
-d_i = [[0 for _ in range(n_g)] for _ in range(n_v_i)]
-s_i = [[0 for _ in range(n_g)] for _ in range(n_v_i)]
-alpha_i = [[0 for _ in range(n_g)] for _ in range(n_v_i)]
-beta_i = [[0 for _ in range(n_g)] for _ in range(n_v_i)]
-p_f = [0 for _ in range(n_g)]
+d_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
+s_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
+alpha_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
+beta_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
+p_f = 0
 
 
-def cycle(i):
-    """
-    Функция вычисления свойств и ср. значений
-    """
-    d_i_ = [i for i in range(n_v_i)]
-    s_i_ = [i for i in range(n_v_i)]
-    alpha_i_ = [i for i in range(n_v_i)]
-    beta_i_ = [i for i in range(n_v_i)]
+def calc():
+    global p_f
+    for i in range(6, n+1):
+        n_d_i = int(i * n_d / n) - 1  # Индекс точки
+        for j in range(n_g):
+            G[j].add_vertex()
+            if i % h == 0:
+                # Вычисление свойств
+                for k in range(n_v_i):
+                    d_i[k][n_d_i] += G[j].vertex_deg(v_i[k])
+                    s_i[k][n_d_i] += G[j].sum_deg_neighbors(v_i[k])
+                    alpha_i[k][n_d_i] += G[j].avg_deg_neighbors(v_i[k])
+                    beta_i[k][n_d_i] += G[j].friendship_index(v_i[k])
+                p_f += G[j].paradox()
 
-    G = BAmodel(m)
-    for j in range(1, n - 4):
-        G.add_vertex()  # Новая вершина
-
-        if j % h == 0:
-            # Вычисление свойств
+        if i % h == 0:
+            # Вычисление средних значений
             for k in range(n_v_i):
-                d_i_[k] += G.vertex_deg(v_i[k])
-                s_i_[k] += G.sum_deg_neighbors(v_i[k])
-                alpha_i_[k] += s_i_[k] / d_i_[k]
-                beta_i_[k] += alpha_i_[k] / d_i_[k]
-
-    # Вычисление средних значений
-    for k in range(n_v_i):
-        d_i_[k] /= div
-        s_i_[k] /= div
-        alpha_i_[k] /= div
-        beta_i_[k] /= div
-
-    return [d_i_, s_i_, alpha_i_, beta_i_, G.paradox()]
+                d_i[k][n_d_i] /= n_g
+                s_i[k][n_d_i] /= n_g
+                alpha_i[k][n_d_i] /= n_g
+                beta_i[k][n_d_i] /= n_g
 
 
 def plt_show():
     """
     Вывод графиков
     """
-    pf = sum(p_f) / len(p_f)  # Парадокс дружбы
-    print(f'Среднее значение p_f = {pf}')
+    global p_f
+    p_f = p_f / (n_d * n_g)  # Парадокс дружбы
+    print(f'Среднее значение p_f = {p_f}')
 
     # Построение графиков
     plt.subplot(221)
@@ -100,7 +95,7 @@ def plt_show():
     plt.subplot(224)
     plt.title('Индекс дружбы')
     plt.xlabel('t')
-    plt.ylabel('beta_i')
+    plt.ylabel('alpha_i')
     plt.grid()
     plt.plot(x, beta_i[0], '.-r', label='i=5')
     plt.plot(x, beta_i[1], '.-y', label='i=50')
@@ -112,19 +107,7 @@ def plt_show():
 if __name__ == '__main__':
     start_time = time()
 
-    # Распределение цикла на процессы
-    with Pool() as p:  # os.cpu_count()
-        res = p.map(cycle, range(n_g))
-
-    # Распаковка результата вычислений
-    for i in range(n_g):
-        for k in range(n_v_i):
-            d_i[k][i] = res[i][0][k]
-            s_i[k][i] = res[i][1][k]
-            alpha_i[k][i] = res[i][2][k]
-            beta_i[k][i] = res[i][3][k]
-        p_f[i] = res[i][4]
+    calc()
 
     print('--- %s seconds ---' % (time() - start_time))
-
     plt_show()

@@ -40,12 +40,10 @@ class BAmodel(Graph):
         Сумма степеней соседей (S_i)
         :param i: вершина
         """
-        sum = 0
-        for j in self.edges:
-            if i in j:
-                sum += len(j)
-
-        return sum
+        return sum(
+            [len(j) if i in j else 0
+             for j in self.edges[:i] + self.edges[i+1:]]
+        )
 
 
     def avg_deg_neighbors(self, i):

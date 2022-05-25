@@ -1,5 +1,3 @@
-from logging import INFO
-# from multiprocessing import Pool, log_to_stderr
 from time import time
 
 import matplotlib.pyplot as plt
@@ -7,13 +5,10 @@ import matplotlib.pyplot as plt
 from BA_model import BAmodel
 
 
-# logger = log_to_stderr()
-# logger.setLevel(INFO)
-
 # Параметры
 m = 5  # Кол-во связей с новой вершиной
-n = 1000  # Кол-во вершин в графе
-n_g = 10  # Кол-во графов
+n = 10000  # Кол-во вершин в графе
+n_g = 100  # Кол-во графов
 h = 250  # Шаг
 n_d = int(n / h)  # Кол-во точек
 x = [i for i in range(h, n + 1, h)]  # Знач. координат на оси X
@@ -26,22 +21,27 @@ d_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
 s_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
 alpha_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
 beta_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
-p_f = 0
+p_f = 0  # Итоговое значение парадокса
 
 
 def calc():
     global p_f
     for i in range(6, n+1):
+        print(i*100/n)
         n_d_i = int(i * n_d / n) - 1  # Индекс точки
         for j in range(n_g):
             G[j].add_vertex()
             if i % h == 0:
                 # Вычисление свойств
                 for k in range(n_v_i):
-                    d_i[k][n_d_i] += G[j].vertex_deg(v_i[k])
-                    s_i[k][n_d_i] += G[j].sum_deg_neighbors(v_i[k])
-                    alpha_i[k][n_d_i] += G[j].avg_deg_neighbors(v_i[k])
-                    beta_i[k][n_d_i] += G[j].friendship_index(v_i[k])
+                    d_i_ = G[j].vertex_deg(v_i[k])
+                    s_i_ = G[j].sum_deg_neighbors(v_i[k])
+                    alpha_i_ = s_i_ / d_i_
+                    # Сумма по каждому i в точках из x
+                    d_i[k][n_d_i] += d_i_
+                    s_i[k][n_d_i] += s_i_
+                    alpha_i[k][n_d_i] += alpha_i_
+                    beta_i[k][n_d_i] += alpha_i_ / d_i_
                 p_f += G[j].paradox()
 
         if i % h == 0:

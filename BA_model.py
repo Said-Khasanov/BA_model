@@ -57,7 +57,6 @@ class BAmodel(Graph):
         """
         Индекс дружбы (beta_i)
         :param i: вершина
-        :return:
         """
         return self.avg_deg_neighbors(i) / self.vertex_deg(i)
 

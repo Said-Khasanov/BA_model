@@ -6,8 +6,8 @@ class Graph:
         Конструктор создаёт сильно связный граф из n вершин
         """
         self.vertex: list = [i for i in range(n)]
-        self.v_count = n
-        self.e_count = 0
+        self.v_count = n  # Кол-во вершин
+        self.e_count = 0  # Кол-во рёбер
 
         self.edges = []
         for i in range(n):
@@ -18,9 +18,9 @@ class Graph:
         self.e_count /= 2
 
     def add_vertex(self, edge: list):
-        """ Добавление вершины
+        """
+        Добавление вершины
         :param edge: список смежных вершин
-        :return:
         """
         x = self.vertex[-1] + 1
 
@@ -36,7 +36,6 @@ class Graph:
     def print_list(self):
         """
         Печать списка смежности
-        :return:
         """
         for i, j in enumerate(self.edges):
             print(f'v{i}: {j}')

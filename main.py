@@ -1,9 +1,15 @@
+from logging import INFO
+from multiprocessing import Pool, log_to_stderr
 from time import time
+from random import seed
 
 import matplotlib.pyplot as plt
 
 from BA_model import BAmodel
 
+logger = log_to_stderr()
+logger.setLevel(INFO)
+seed(5)
 
 # Параметры
 m = 5  # Кол-во связей с новой вершиной
@@ -16,6 +22,7 @@ v_i = [5, 50, 100]  # Тестируемые вершины
 n_v_i = len(v_i)  # Кол-во тестируемых вершин
 G = [BAmodel(m) for _ in range(n_g)]  # Список графов
 
+
 # Списки для хранения свойств графов
 d_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
 s_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
@@ -24,10 +31,61 @@ beta_i = [[0 for _ in range(n_d)] for _ in range(n_v_i)]
 p_f = 0  # Итоговое значение парадокса
 
 
-def calc():
+def cycle(G_, j):
+    d_i_ = [i for i in range(n_v_i)]
+    s_i_ = [i for i in range(n_v_i)]
+    alpha_i_ = [i for i in range(n_v_i)]
+    beta_i_ = [i for i in range(n_v_i)]
+
+    # Вычисление свойств
+    for k in range(n_v_i):
+        _di = G_[j].vertex_deg(v_i[k])
+        _si = G_[j].sum_deg_neighbors(v_i[k])
+        _alphai = _si / _di
+        # Сумма по каждому i в точках из x
+        d_i_[k] = _di
+        s_i_[k] = _si
+        alpha_i_[k] = _alphai
+        beta_i_[k] = _alphai / _di
+
+    return [d_i_, s_i_, alpha_i_, beta_i_, G_[j].paradox()]
+
+
+def multi(proc):
+    global p_f
+    for i in range(m+1, n+1):
+        n_d_i = int(i * n_d / n) - 1  # Индекс точки
+
+        for j in range(n_g):
+            G[j].add_vertex()
+
+        # for j in range(n_g):
+        if i % h == 0:
+            # Распределение цикла на процессы
+            with Pool(proc) as p:  # os.cpu_count()
+                res = p.starmap(cycle, [(G, j) for j in range(n_g)])
+
+            # Распаковка результата вычислений
+            for j in range(n_g):
+                for k in range(n_v_i):
+                    d_i[k][n_d_i] += res[j][0][k]
+                    s_i[k][n_d_i] += res[j][1][k]
+                    alpha_i[k][n_d_i] += res[j][2][k]
+                    beta_i[k][n_d_i] += res[j][3][k]
+                p_f += res[j][4]
+
+            # Вычисление средних значений
+            for k in range(n_v_i):
+                d_i[k][n_d_i] /= n_g
+                s_i[k][n_d_i] /= n_g
+                alpha_i[k][n_d_i] /= n_g
+                beta_i[k][n_d_i] /= n_g
+        print(i * 100 / n)
+
+
+def single():
     global p_f
     for i in range(6, n+1):
-        print(i*100/n)
         n_d_i = int(i * n_d / n) - 1  # Индекс точки
         for j in range(n_g):
             G[j].add_vertex()
@@ -51,12 +109,10 @@ def calc():
                 s_i[k][n_d_i] /= n_g
                 alpha_i[k][n_d_i] /= n_g
                 beta_i[k][n_d_i] /= n_g
+        print(i*100/n)
 
 
 def plt_show():
-    """
-    Вывод графиков
-    """
     global p_f
     p_f = p_f / (n_d * n_g)  # Парадокс дружбы
     print(f'Среднее значение p_f = {p_f}')
@@ -105,9 +161,21 @@ def plt_show():
 
 
 if __name__ == '__main__':
-    start_time = time()
+    # mps = input("mp = ")
 
-    calc()
+    try:
+        proc = int(input('Кол-во процессов = '))
+    except ValueError:
+        proc = None
+
+    start_time = time()
+    # if mps == '1':
+    #     multi()
+    # else:
+    #     single()
+
+    multi(proc)
 
     print('--- %s seconds ---' % (time() - start_time))
+
     plt_show()

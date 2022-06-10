@@ -1,7 +1,6 @@
 from logging import INFO
 from multiprocessing import Pool, log_to_stderr
 from time import time
-from random import seed
 
 import matplotlib.pyplot as plt
 
@@ -9,7 +8,7 @@ from BA_model import BAmodel
 
 logger = log_to_stderr()
 logger.setLevel(INFO)
-# seed(5)
+
 
 # Параметры
 m = 3  # Кол-во связей с новой вершиной

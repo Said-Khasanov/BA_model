@@ -6,11 +6,11 @@ from graph import Graph
 class BAmodel(Graph):
     """Модель Барабаши-Альберт"""
 
-    def __init__(self, m=5):
+    def __init__(self, m):
         """
         :param m: Кол-во связей с новой вершиной, default = 5
         """
-        super().__init__()
+        super().__init__(m)
         self.m = m
 
     def add_vertex(self, edge: list = None):
@@ -18,8 +18,8 @@ class BAmodel(Graph):
         if edge is None:
             edge = []
 
-            P_n = (self.e_count + self.m) * 2
-            weights = [len(i) / P_n for i in self.edges]
+            P_n = sum([len(i) for i in self.edges])  # Сумма всех степеней
+            weights = [len(i) / P_n for i in self.edges]  # Вероятности
 
             while len(set(edge)) != self.m:  # Исключение повоторений
                 edge = choices(self.vertex, weights, k=self.m)

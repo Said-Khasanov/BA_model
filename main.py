@@ -9,10 +9,10 @@ from BA_model import BAmodel
 
 logger = log_to_stderr()
 logger.setLevel(INFO)
-seed(5)
+# seed(5)
 
 # Параметры
-m = 5  # Кол-во связей с новой вершиной
+m = 10  # Кол-во связей с новой вершиной
 n = 10000  # Кол-во вершин в графе
 n_g = 100  # Кол-во графов
 h = 250  # Шаг
@@ -53,7 +53,7 @@ def cycle(G_, j):
 
 def multi(proc):
     global p_f
-    for i in range(m+1, n+1):
+    for i in range(m, n):
         n_d_i = int(i * n_d / n) - 1  # Индекс точки
 
         for j in range(n_g):
@@ -85,7 +85,7 @@ def multi(proc):
 
 def single():
     global p_f
-    for i in range(6, n+1):
+    for i in range(m, n):
         n_d_i = int(i * n_d / n) - 1  # Индекс точки
         for j in range(n_g):
             G[j].add_vertex()

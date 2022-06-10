@@ -12,12 +12,12 @@ logger.setLevel(INFO)
 # seed(5)
 
 # Параметры
-m = 10  # Кол-во связей с новой вершиной
-n = 10000  # Кол-во вершин в графе
-n_g = 100  # Кол-во графов
+m = 3  # Кол-во связей с новой вершиной
+n = 1000  # Кол-во вершин в графе
+n_g = 10  # Кол-во графов
 h = 250  # Шаг
 n_d = int(n / h)  # Кол-во точек
-x = [i for i in range(h, n + 1, h)]  # Знач. координат на оси X
+x = [i for i in range(h, n+1, h)]  # Знач. координат на оси X
 v_i = [5, 50, 100]  # Тестируемые вершины
 n_v_i = len(v_i)  # Кол-во тестируемых вершин
 G = [BAmodel(m) for _ in range(n_g)]  # Список графов
@@ -53,7 +53,7 @@ def cycle(G_, j):
 
 def multi(proc):
     global p_f
-    for i in range(m, n):
+    for i in range(m, n+1):
         n_d_i = int(i * n_d / n) - 1  # Индекс точки
 
         for j in range(n_g):
@@ -85,7 +85,7 @@ def multi(proc):
 
 def single():
     global p_f
-    for i in range(m, n):
+    for i in range(m, n+1):
         n_d_i = int(i * n_d / n) - 1  # Индекс точки
         for j in range(n_g):
             G[j].add_vertex()
